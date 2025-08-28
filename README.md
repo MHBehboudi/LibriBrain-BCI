@@ -102,4 +102,4 @@ We welcome contributions, feedback, and discussions! Please open an issue or pul
 
 ## References
 
-LibriBrain Competition Website (NeurIPS 2025)
+[LibriBrain Competition Website (NeurIPS 2025)](https://neural-processing-lab.github.io/2025-libribrain-competition/tracks/)
