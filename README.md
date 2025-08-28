@@ -100,3 +100,6 @@ Below is the high-level workflow from MEG recordings to predictions:
 
 We welcome contributions, feedback, and discussions! Please open an issue or pull request if you’d like to collaborate.
 
+## References
+
+LibriBrain Competition Website (NeurIPS 2025)
