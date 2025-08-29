@@ -63,7 +63,7 @@ pip install pnpl
 All experiments for Task 1 (speech vs. silence classification) are in:
 Pipeline (scripts):
 
-task1_speech/notebooks/0_setup_and_env.py — Environment setup & config
+[0_setup_and_env.py](task1_speech/notebooks/0_setup_and_env.py)   — Environment setup & config
 
 1_pretrain_eeg2rep.py
  — Self-supervised EEG2Rep pretraining
