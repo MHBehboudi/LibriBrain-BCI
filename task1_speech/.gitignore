@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Data, Models, Logs
+/scratch/
+*.ckpt
+*.csv
+
+# IDEs
+.vscode/
+.idea/
