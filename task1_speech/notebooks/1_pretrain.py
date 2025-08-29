@@ -1,6 +1,6 @@
-# 1 — EEG2Rep Pretraining (Self-Supervised)
+# 1 —Pretraining (Self-Supervised)
 
-## This notebook pretrains an encoder on MEG with random masking (EEG2Rep-style).
+## This notebook pretrains an encoder on MEG with random masking (PreTrain-style).
 ## It produces a checkpoint that is later used to initialize the supervised model.
 
 # Imports are assumed from Notebook 0 if running in one kernel. Re-import key pieces if running standalone.
@@ -47,7 +47,7 @@ def apply_ssp_masking(input_embedding_tensor: torch.Tensor, mask_ratio: float = 
     original_masked_features = torch.stack(original_masked_features_list, dim=0)
     return masked, original_masked_features, context_indices_list, masked_indices_list
 
-class EEG2RepInputEncoder(nn.Module):
+class PreTrainInputEncoder(nn.Module):
     def __init__(self, in_channels, embedding_dim, reduced_time_steps):
         super().__init__()
         self.conv_layers = nn.Sequential(
@@ -62,7 +62,7 @@ class EEG2RepInputEncoder(nn.Module):
         )
     def forward(self, x): return self.conv_layers(x)
 
-class EEG2RepTransformerEncoder(nn.Module):
+class PreTrainTransformerEncoder(nn.Module):
     def __init__(self, embedding_dim, num_heads, num_layers, dropout):
         super().__init__()
         layer = nn.TransformerEncoderLayer(
@@ -74,7 +74,7 @@ class EEG2RepTransformerEncoder(nn.Module):
         self.norm = nn.LayerNorm(embedding_dim)
     def forward(self, x): return self.enc(self.norm(x))
 
-class EEG2RepPredictor(nn.Module):
+class PreTrainPredictor(nn.Module):
     def __init__(self, embedding_dim, num_layers=2):
         super().__init__()
         layers = []
@@ -84,25 +84,25 @@ class EEG2RepPredictor(nn.Module):
         self.net = nn.Sequential(*layers)
     def forward(self, x): return self.net(x)
 
-class EEG2RepPretrainer(L.LightningModule):
+class PreTrainPretrainer(L.LightningModule):
     def __init__(self, **hparams):
         super().__init__()
         self.save_hyperparameters()
-        self.input_encoder = EEG2RepInputEncoder(NUM_TOTAL_MEG_CHANNELS, hparams['eeg2rep_embedding_dim'], hparams['eeg2rep_reduced_time_steps'])
-        self.context_transformer = EEG2RepTransformerEncoder(hparams['eeg2rep_embedding_dim'], hparams['eeg2rep_transformer_heads'], hparams['eeg2rep_transformer_layers'], DROPOUT_RATE)
-        self.target_transformer  = EEG2RepTransformerEncoder(hparams['eeg2rep_embedding_dim'], hparams['eeg2rep_transformer_heads'], hparams['eeg2rep_transformer_layers'], DROPOUT_RATE)
+        self.input_encoder = PreTrainInputEncoder(NUM_TOTAL_MEG_CHANNELS, hparams['PreTrain_embedding_dim'], hparams['PreTrain_reduced_time_steps'])
+        self.context_transformer =PreTrainTransformerEncoder(hparams['PreTrain_embedding_dim'], hparams['PreTrain_transformer_heads'], hparams['PreTrain_transformer_layers'], DROPOUT_RATE)
+        self.target_transformer  = PreTrainTransformerEncoder(hparams['PreTrain_embedding_dim'], hparams['PreTrain_transformer_heads'], hparams['PreTrain_transformer_layers'], DROPOUT_RATE)
         self.target_transformer.load_state_dict(self.context_transformer.state_dict())
         for p in self.target_transformer.parameters(): p.requires_grad = False
-        self.predictor = EEG2RepPredictor(hparams['eeg2rep_embedding_dim'], num_layers=EEG2REP_PREDICTOR_DEPTH)
+        self.predictor = PreTrainPredictor(hparams['PreTrain_embedding_dim'], num_layers=PreTrain_PREDICTOR_DEPTH)
         self.mse = nn.MSELoss()
     def forward(self, x):
         init = self.input_encoder(x)                           # (B, D, T_r)
         init_tr = init.permute(0,2,1)                          # (B, T_r, D)
-        masked, _, _, masked_idx = apply_ssp_masking(init, EEG2REP_MASK_RATIO)
+        masked, _, _, masked_idx = apply_ssp_masking(init, PreTrain_MASK_RATIO)
         ctx = self.context_transformer(masked.permute(0,2,1))  # (B, T_r, D)
         valid = [i for i in range(x.size(0)) if masked_idx[i].numel()>0]
         if not valid:
-            return torch.empty(0, self.hparams['eeg2rep_embedding_dim'], device=x.device), torch.empty(0, self.hparams['eeg2rep_embedding_dim'], device=x.device)
+            return torch.empty(0, self.hparams['PreTrain_embedding_dim'], device=x.device), torch.empty(0, self.hparams['PreTrain_embedding_dim'], device=x.device)
         ctx_at_mask = torch.cat([ctx[i, masked_idx[i], :] for i in valid], dim=0)
         with torch.no_grad():
             tgt_full = self.target_transformer(init_tr)
@@ -160,14 +160,14 @@ unlabeled = LibriBrainSpeech(data_path=f"{BASE_PATH}/data/", include_run_keys=tr
 pretrain_ds = FilteredDataset(unlabeled, is_train=True)
 pretrain_loader = DataLoader(pretrain_ds, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
 
-hparams = dict(eeg2rep_embedding_dim=EEG2REP_EMBEDDING_DIM,
-               eeg2rep_reduced_time_steps=EEG2REP_REDUCED_TIME_STEPS,
-               eeg2rep_transformer_heads=EEG2REP_TRANSFORMER_HEADS,
-               eeg2rep_transformer_layers=EEG2REP_TRANSFORMER_LAYERS)
+hparams = dict(PreTrain_embedding_dimPreTrain_EMBEDDING_DIM,
+               PreTrain_reduced_time_steps=PreTrain_REDUCED_TIME_STEPS,
+               PreTrain_transformer_heads=PreTrain_TRANSFORMER_HEADS,
+               PreTrainp_transformer_layers=PreTrain_TRANSFORMER_LAYERS)
 
-model = EEG2RepPretrainer(**hparams)
-logger = CSVLogger(save_dir=f"{BASE_PATH}/lightning_logs", name="", version="eeg2rep_pretrain_run")
-ckpt_cb = ModelCheckpoint(dirpath=f"{BASE_PATH}/models", filename="eeg2rep_pretrain_best_{epoch:02d}-{pretrain_loss:.3f}", monitor="pretrain_loss", mode="min", save_top_k=1)
+model = PreTrainPretrainer(**hparams)
+logger = CSVLogger(save_dir=f"{BASE_PATH}/lightning_logs", name="", version="PreTrain_pretrain_run")
+ckpt_cb = ModelCheckpoint(dirpath=f"{BASE_PATH}/models", filename="PreTrain_pretrain_best_{epoch:02d}-{pretrain_loss:.3f}", monitor="pretrain_loss", mode="min", save_top_k=1)
 trainer = L.Trainer(devices=1, accelerator="gpu" if torch.cuda.is_available() else "cpu", max_epochs=PRETRAIN_EPOCHS, logger=logger, callbacks=[ckpt_cb, TQDMProgressBar(refresh_rate=1)])
 print("Ready to pretrain. (Skip execution here if you just wanted the notebook files.)")
 
