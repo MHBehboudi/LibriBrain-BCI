@@ -1,7 +1,7 @@
 # LibriBrain-BCI  
 **NeurIPS 2025 PNPL Competition — Brain–Computer Interface Models for Speech Detection & Phoneme Classification**  
 
-This repository contains our solutions for the [LibriBrain Competition (NeurIPS 2025)]([https://neurips.cc/](https://neural-processing-lab.github.io/2025-libribrain-competition/tracks/)), organized under the **PNPL Challenge**. The competition focuses on decoding language from **magnetoencephalography (MEG)** recordings, representing one of the largest publicly accessible non-invasive neuroimaging datasets for speech and language.  
+This repository contains our solutions for the [LibriBrain Competition Website (NeurIPS 2025)](https://neural-processing-lab.github.io/2025-libribrain-competition/tracks/), organized under the **PNPL Challenge**. The competition focuses on decoding language from **magnetoencephalography (MEG)** recordings, representing one of the largest publicly accessible non-invasive neuroimaging datasets for speech and language.  
 
 Our project addresses both tasks of the competition:  
 
