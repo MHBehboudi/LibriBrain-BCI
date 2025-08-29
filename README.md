@@ -1,5 +1,5 @@
 # Neural Decoding of Speech
-**  Brain–Computer Interface Models for Speech Detection & Phoneme Classification**  
+**Brain–Computer Interface Models for Speech Detection & Phoneme Classification**  
 
 This repository contains our solutions for decoding speech from **magnetoencephalography (MEG)** recordings.
 
