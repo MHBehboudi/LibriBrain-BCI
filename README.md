@@ -25,10 +25,8 @@ Unlike invasive BCI datasets (e.g., ECoG), **MEG datasets** are non-invasive, lo
 
 ## Repository Structure
 
-- [README.md](README.md)  
-- [requirements.txt](requirements.txt)  
-- [configs/](configs/) – Training & model configuration files  
-- [data/](data/) – Dataset download & preprocessing scripts  
+- [requirements.txt](task1_speech/requirements.txt)  
+- [configs/](task1_speech/configs) – Training & model configuration files  
 - [models/](models/) – Model architectures (CNNs, Transformers, GNNs, etc.)  
 - [training/](training/) – Training loops & utilities  
 - [evaluation/](evaluation/) – Metrics, threshold tuning, leaderboard submission  
