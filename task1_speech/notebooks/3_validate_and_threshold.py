@@ -15,7 +15,7 @@ class ValidationPredictionDataset(torch.utils.data.Dataset):
                  reduced_steps: int = None):
         self.base = base_val_filtered_dataset
         self.use_seq2seq = USE_SEQ2SEQ_PREDICTION if use_seq2seq is None else use_seq2seq
-        self.red_steps = EEG2REP_REDUCED_TIME_STEPS if reduced_steps is None else reduced_steps
+        self.red_steps = PreTrain_REDUCED_TIME_STEPS if reduced_steps is None else reduced_steps
 
     def __len__(self):
         return len(self.base)
