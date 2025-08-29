@@ -63,7 +63,7 @@ class FusionAttention(nn.Module):
         out = torch.bmm(att,v).reshape(self.h,B,self.dh).transpose(0,1).reshape(B,self.D)
         return r + self.drop(self.out(out))
 
-  class EEG2RepInputEncoder(nn.Module):
+  class PreTrainInputEncoder(nn.Module):
     def __init__(self, in_channels, embedding_dim, reduced_time_steps):
         super().__init__()
         self.conv = nn.Sequential(
@@ -76,7 +76,7 @@ class FusionAttention(nn.Module):
     def forward(self, x): return self.conv(x)
 
 ## Core Model
-class EEG2RepTransformerEncoder(nn.Module):
+class PreTrainTransformerEncoder(nn.Module):
     def __init__(self, embedding_dim, heads, layers, dropout):
         super().__init__()
         lyr = nn.TransformerEncoderLayer(d_model=embedding_dim, nhead=heads, dim_feedforward=4*embedding_dim, dropout=dropout, activation='gelu', batch_first=True)
@@ -88,8 +88,8 @@ class EEG2RepTransformerEncoder(nn.Module):
 class SpeechModelHybridGNN(nn.Module):
     def __init__(self):
         super().__init__()
-        self.eeg_in = EEG2RepInputEncoder(NUM_TOTAL_MEG_CHANNELS, EEG2REP_EMBEDDING_DIM, EEG2REP_REDUCED_TIME_STEPS)
-        self.eeg_enc = EEG2RepTransformerEncoder(EEG2REP_EMBEDDING_DIM, EEG2REP_TRANSFORMER_HEADS, EEG2REP_TRANSFORMER_LAYERS, DROPOUT_RATE)
+        self.eeg_in = PreTrainInputEncoder(NUM_TOTAL_MEG_CHANNELS, PreTrain_EMBEDDING_DIM, PreTrain_REDUCED_TIME_STEPS)
+        self.eeg_enc = PreTrainTransformerEncoder(PreTrain_EMBEDDING_DIM, PreTrain_TRANSFORMER_HEADS, PreTrain_TRANSFORMER_LAYERS, DROPOUT_RATE)
 
         self.cnn_in = NUM_RAW_CHANNELS_CNN_STREAM
         self.conv = nn.Conv1d(self.cnn_in, CONV_DIM, 3, padding=1)
@@ -119,7 +119,7 @@ class SpeechModelHybridGNN(nn.Module):
             self.gnn_final_dim = 0
 
         fused_cnn_attn_dim = CONV_DIM + ATTN_DIM
-        fusion_in = EEG2REP_EMBEDDING_DIM + fused_cnn_attn_dim + self.gnn_final_dim
+        fusion_in = PreTrain_EMBEDDING_DIM + fused_cnn_attn_dim + self.gnn_final_dim
         self.fusion_attn = FusionAttention(fusion_in, FUSION_ATTN_HEADS, FUSION_ATTN_DIM_PER_HEAD, DROPOUT_RATE) if USE_FUSION_ATTENTION else nn.Identity()
         self.lstm = nn.LSTM(input_size=fusion_in, hidden_size=fusion_in, num_layers=LSTM_LAYERS, batch_first=True, dropout=DROPOUT_RATE if LSTM_LAYERS>1 else 0, bidirectional=BI_DIRECTIONAL)
         self.lstm_drop = nn.Dropout(DROPOUT_RATE)
@@ -209,7 +209,7 @@ class SpeechClassifier(L.LightningModule):
         x,g,y = batch
         x,g,y = x.to(self.device), g.to(self.device), y.to(self.device)
         if USE_SEQ2SEQ_PREDICTION:
-            target_len = EEG2REP_REDUCED_TIME_STEPS
+            target_len = PreTrain_REDUCED_TIME_STEPS
             y2 = F.adaptive_avg_pool1d(y.unsqueeze(0).unsqueeze(0).float(), target_len).squeeze(0).squeeze(0)
             ybin = y2.round().long()
         else:
@@ -308,8 +308,8 @@ val_loader   = DataLoader(val_ds,   batch_size=BATCH_SIZE, shuffle=False, num_wo
 
 pos_w = calculate_pos_weight(train_loader)
 model = SpeechClassifier(pos_weight=pos_w, batch_size=BATCH_SIZE)
-logger = CSVLogger(save_dir=f"{BASE_PATH}/lightning_logs", name="", version="fine_tuned_eeg2rep_hybrid_speech")
-ckpt = ModelCheckpoint(dirpath=f"{BASE_PATH}/models", filename="best_fine_tuned_eeg2rep_hybrid_speech_{epoch:02d}-{val_f1_at_optimal_thresh:.3f}", monitor="val_f1_at_optimal_thresh", mode="max", save_top_k=1)
+logger = CSVLogger(save_dir=f"{BASE_PATH}/lightning_logs", name="", version="fine_tuned_PreTrain_hybrid_speech")
+ckpt = ModelCheckpoint(dirpath=f"{BASE_PATH}/models", filename="best_fine_tuned_PreTrain_hybrid_speech_{epoch:02d}-{val_f1_at_optimal_thresh:.3f}", monitor="val_f1_at_optimal_thresh", mode="max", save_top_k=1)
 trainer = L.Trainer(devices=1, accelerator="gpu" if torch.cuda.is_available() else "cpu", max_epochs=NUM_EPOCHS,
                     logger=logger, callbacks=[EarlyStopping("val_f1_at_optimal_thresh", patience=10, mode="max"), ckpt, TQDMProgressBar(refresh_rate=1), StochasticWeightAveraging(swa_lrs=1e-3)])
 print("Ready to train. (Skip execution here if you just wanted the notebook files.)")
