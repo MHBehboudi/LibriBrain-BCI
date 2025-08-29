@@ -23,17 +23,6 @@ Unlike invasive BCI datasets (e.g., ECoG), **MEG datasets** are non-invasive, lo
 
 ---
 
-## Installation
-
-```bash
-git clone https://github.com/<your-username>/LibriBrain-BCI.git
-cd LibriBrain-BCI
-pip install -r requirements.txt
-# toolkit
-pip install pnpl
-````
-
----
 
 ## Task 1: Speech Detection
 All experiments for Task 1 (speech vs. silence classification) are in:
