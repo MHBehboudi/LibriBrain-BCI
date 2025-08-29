@@ -37,7 +37,7 @@ LibriBrain-BCI/
 - [evaluation/](evaluation/) – Metrics, threshold tuning, leaderboard submission  
 - [task1_speech/](task1_speech/) – Speech detection experiments  
   - [notebooks/](task1_speech/notebooks/) – Converted pipeline scripts  
-    - [0_setup_and_env.py]([0_setup_and_env.py](https://github.com/MHBehboudi/LibriBrain-BCI/blob/main/task1_speech/notebooks/0_setup_and_env.py))  
+    - [0_setup_and_env.py](task1_speech/notebooks/0_setup_and_env.py)  
     - [1_pretrain_eeg2rep.py](task1_speech/notebooks/1_pretrain_eeg2rep.py)  
     - [2_train_speech_detection.py](task1_speech/notebooks/2_train_speech_detection.py)  
     - [3_validate_and_threshold.py](task1_speech/notebooks/3_validate_and_threshold.py)  
@@ -47,7 +47,6 @@ LibriBrain-BCI/
   - [scripts/](task1_speech/scripts/) – Refactored Python scripts  
   - [results/](task1_speech/results/) – Logs, checkpoints, submissions  
 - [task2_phoneme/](task2_phoneme/) – (empty, Phase 2)
-
 
 
 ## Installation
