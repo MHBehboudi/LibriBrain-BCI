@@ -23,9 +23,6 @@ Unlike invasive BCI datasets (e.g., ECoG), the **LibriBrain MEG dataset** is lar
 
 ---
 
-## Repository Structure 
-
-LibriBrain-BCI/
 ## Repository Structure  
 
 - [README.md](README.md)  
