@@ -10,8 +10,8 @@ from torch.utils.data import DataLoader
 from sklearn.metrics import f1_score
 
 # --- USER INPUT: set your two fine-tuned checkpoints here ---
-SPEECH_CKPT   = os.path.join(BASE_PATH, "models", "best_fine_tuned_eeg2rep_hybrid_speech_focused.ckpt")
-SILENCE_CKPT  = os.path.join(BASE_PATH, "models", "best_fine_tuned_eeg2rep_hybrid_silence_focused.ckpt")
+SPEECH_CKPT   = os.path.join(BASE_PATH, "models", "best_fine_tuned_PreTrain_hybrid_speech_focused.ckpt")
+SILENCE_CKPT  = os.path.join(BASE_PATH, "models", "best_fine_tuned_PreTrain_hybrid_silence_focused.ckpt")
 
 # Optional: if you saved optimal thresholds during training into hparams, they'll be loaded automatically.
 
@@ -138,6 +138,6 @@ final_binary = (combined_holdout >= best_thresh).astype(np.int32)
 
 # --- Write submission ---
 os.makedirs(SUBMISSION_PATH, exist_ok=True)
-out_csv = os.path.join(SUBMISSION_PATH, "libribrain_speech_submission_eeg2rep_hybrid_ensemble_optimized.csv")
+out_csv = os.path.join(SUBMISSION_PATH, "libribrain_speech_submission_PreTrain_hybrid_ensemble_optimized.csv")
 pd.DataFrame({"speech_prob": final_binary}).to_csv(out_csv, index=False)
 print(f"[✓] Wrote submission: {out_csv}")
