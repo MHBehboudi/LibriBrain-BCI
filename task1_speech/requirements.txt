@@ -1,0 +1,9 @@
+torch
+lightning
+torch-geometric
+pandas
+numpy
+scikit-learn
+tqdm
+requests
+pnpl==0.0.4
