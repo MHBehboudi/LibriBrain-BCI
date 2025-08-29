@@ -22,6 +22,7 @@ Decoding speech from brain activity has profound implications:
 Unlike invasive BCI datasets (e.g., ECoG), **MEG datasets** are non-invasive, lowering the barrier of entry for the broader ML and neuroscience communities.  
 
 ---
+![Project Workflow Chart](Speech_Neural_Decoding_Flow_Chart.png)
 
 
 ## Task 1: Speech Detection
