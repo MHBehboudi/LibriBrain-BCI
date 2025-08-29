@@ -29,7 +29,7 @@ All experiments for Task 1 (speech vs. silence classification) are in:
 Pipeline (scripts):
 
 - [0_setup_and_env.py](task1_speech/notebooks/0_setup_and_env.py)   — Environment setup & config
-- [1_pretrain_eeg2rep.py](task1_speech/notebooks/1_pretrain_eeg2rep.py)  — Self-supervised pretraining
+- [1_pretrain_eeg2rep.py](task1_speech/notebooks/1_pretrain.py)  — Self-supervised pretraining
 - [2_train_speech_detection.py](task1_speech/notebooks/2_train_speech_detection.py) — Supervised fine-tuning
 - [3_validate_and_threshold.py](task1_speech/notebooks/3_validate_and_threshold.py)  — Validation & threshold tuning
 - [4_ensemble_and_submission.py](task1_speech/notebooks/4_ensemble_and_submission.py)  — Ensemble & submission generation
