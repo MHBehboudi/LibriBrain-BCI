@@ -1,19 +1,20 @@
-# config.py
+# libribrain/config.py
 import os
 
 # --- Core Paths ---
-BASE_PATH = "../scratch/libribrain_data"
-SUBMISSION_PATH = "libribrain_data/submissions"
+BASE_PATH = os.path.join(os.path.expanduser("~"), "scratch", "libribrain_data")
+MODELS_PATH = os.path.join(BASE_PATH, "models")
+SUBMISSIONS_PATH = os.path.join(BASE_PATH, "submissions")
+LOGS_PATH = os.path.join(BASE_PATH, "logs")
 
 # --- Model & Training Parameters ---
-NUM_EPOCHS = 15 
+NUM_EPOCHS = 15
 BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
 DROPOUT_RATE = 0.4
 LAMBDA_SPARSE = 1e-5
 LSTM_LAYERS = 2
 BI_DIRECTIONAL = True
-POS_WEIGHT = 3.0 
 
 # --- Main Temporal Encoder Parameters ---
 TEMPORAL_EMBEDDING_DIM = 256
@@ -30,40 +31,19 @@ CNN_ATTN_TRANSFORMER_LAYERS = 6
 
 # --- GNN & Residual & Fusion Attention Flags ---
 USE_GNN = True
-USE_GAT = True
+USE_GAT = True # Set to False to use GCN
 GNN_OUTPUT_DIM = 64
 RAW_DOWNSAMPLE_LEN = 10
 NUM_GNN_LAYERS = 3
-USE_CNN_RESIDUAL = True
 USE_GNN_RESIDUAL = True
-USE_FUSION_ATTENTION = True
-FUSION_ATTN_HEADS = 4
-FUSION_ATTN_DIM_PER_HEAD = 16
 
-# --- Parameters for GNN specific to K-Means Clustering ---
+# --- GNN Clustering Parameters ---
 NUM_GNN_SPATIAL_CLUSTERS = 50
-NUM_GNN_SPATIAL_CLUSTER_NODES = NUM_GNN_SPATIAL_CLUSTERS
 NUM_PCA_COMPONENTS_PER_CLUSTER = 3
-USE_PCA_VARIANCE_AS_FEATURE = False
 
 # --- Other Parameters ---
-USE_SEQ2SEQ_PREDICTION = True
 USE_KNOWLEDGE_DISTILLATION = True
 DISTILLATION_ALPHA = 0.7
-USE_MIXUP = True
-MIXUP_ALPHA = 0.4
-APPLY_GAUSSIAN_NOISE = True
-NOISE_STD = 0.015
-ENABLE_SWA = True
-
-# --- AUGMENTATION PARAMETERS ---
-AUG_RANDOM_CROP_MIN_RATIO = 0.8
-AUG_RANDOM_CROP_MAX_RATIO = 1.0
-AUG_TIME_WARP_MAX_STRETCH = 0.05
-AUG_CHANNEL_MASK_RATIO = 0.2
-
-# --- DEBUG/TESTING PARAMETERS ---
-DEBUG_PREDICTION_SAMPLES = None
 
 # --- FIXED SENSOR SET & DERIVED PARAMS ---
 SENSORS_SPEECH_MASK = [
@@ -71,9 +51,10 @@ SENSORS_SPEECH_MASK = [
     146, 147, 149, 175, 176, 177, 179, 180, 198, 271, 272, 275
 ]
 NUM_RAW_CHANNELS_CNN_STREAM = len(SENSORS_SPEECH_MASK)
-NUM_TOTAL_MEG_CHANNELS = 306
-SAMPLING_RATE = 250
+NUM_GNN_SPATIAL_CLUSTER_NODES = NUM_GNN_SPATIAL_CLUSTERS
+NUM_GNN_NODES_TOTAL = NUM_RAW_CHANNELS_CNN_STREAM + NUM_GNN_SPATIAL_CLUSTER_NODES if USE_GNN else 0
 SEGMENT_TIME_LEN_SAMPLES = 1000
 
-# GNN Derived Node Counts
-NUM_GNN_NODES_TOTAL = NUM_RAW_CHANNELS_CNN_STREAM + NUM_GNN_SPATIAL_CLUSTER_NODES if USE_GNN else 0
+# --- DATA KEYS ---
+TRAIN_KEYS = [( "0", f"{i}", "Sherlock2", "1" ) for i in range(1,13) if i != 2] + [( "0", f"{i}", "Sherlock4", "1" ) for i in range(1,13) if i != 8] + [( "0", f"{i}", "Sherlock5", "1" ) for i in range(1,13)] +[( "0", f"{i}", "Sherlock6", "1" ) for i in range(2,13)]
+VAL_KEYS = [("0","11","Sherlock1","2")]
