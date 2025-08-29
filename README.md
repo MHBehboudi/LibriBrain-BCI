@@ -23,28 +23,6 @@ Unlike invasive BCI datasets (e.g., ECoG), **MEG datasets** are non-invasive, lo
 
 ---
 
-## Repository Structure
-
-- [requirements.txt](task1_speech/requirements.txt)  
-- [configs/](task1_speech/configs) – Training & model configuration files  
-- [models/](models/) – Model architectures (CNNs, Transformers, GNNs, etc.)  
-- [training/](training/) – Training loops & utilities  
-- [evaluation/](evaluation/) – Metrics, threshold tuning, leaderboard submission  
-- [task1_speech/](task1_speech/) – Speech detection experiments  
-  - [notebooks/](task1_speech/notebooks/) – **Scripted pipeline (converted from notebooks)**
-    - [0_setup_and_env.py](task1_speech/notebooks/0_setup_and_env.py)  
-    - [1_pretrain_eeg2rep.py](task1_speech/notebooks/1_pretrain_eeg2rep.py)  
-    - [2_train_speech_detection.py](task1_speech/notebooks/2_train_speech_detection.py)  
-    - [3_validate_and_threshold.py](task1_speech/notebooks/3_validate_and_threshold.py)  
-    - [4_ensemble_and_submission.py](task1_speech/notebooks/4_ensemble_and_submission.py)  
-    - [5_utils_gnn_clustering.py](task1_speech/notebooks/5_utils_gnn_clustering.py)  
-    - [README.md](task1_speech/notebooks/README.md)  
-  - [scripts/](task1_speech/scripts/) – Refactored Python modules (optional)  
-  - [results/](task1_speech/results/) – Logs, checkpoints, submissions  
-- [task2_phoneme/](task2_phoneme/) – (empty, Phase 2)
-
----
-
 ## Installation
 
 ```bash
@@ -86,8 +64,6 @@ python evaluation/eval_speech.py --input checkpoints/speech_model.pt
 ````
 ### Results (Task 1)
 
-On the official competition test dataset provided by the organizers, our best model achieved:
-
 - **Macro F1 Score:** 0.82  
 
 ## Task 2: Phoneme Classification (Coming Soon)
@@ -99,38 +75,4 @@ fθ(X_MEG) → P = {aa, ae, ah, ...}
 ```
 
 Implementation details and experiments will be added in Phase 2 of the project.
-
-## Evaluation Protocol
-
-- Shared holdout set provided by competition organizers.
-
-- Metrics:
-
-  - Speech Detection → Accuracy, F1 score
-
-  - Phoneme Classification → Accuracy, Macro-F1, Confusion Matrix
-
-## Research Directions
-
-Some directions we are exploring:
-- **Spatiotemporal deep learning:** Transformers, ConvNets, and temporal attention mechanisms for MEG decoding
-- **Representation learning:** Contrastive and self-supervised pretraining on large MEG corpora
-- **Cross-task generalization:** Transfer learning between speech detection and phoneme classification
-- **Neuroscience alignment:** Comparing learned representations with known auditory/linguistic cortical hierarchies
-
-## Project Pipeline
-
-Below is the high-level workflow from MEG recordings to predictions:
-
-[ MEG Data ] → [ Preprocessing ] → [ Deep Learning Model ] → [ Speech / Phoneme Prediction ]
-
-
-(A detailed diagram can be added here: docs/pipeline.png)
-
-## Contributions
-
-We welcome contributions, feedback, and discussions! Please open an issue or pull request if you’d like to collaborate.
-
-## References
-
-[LibriBrain Competition Website (NeurIPS 2025)](https://neural-processing-lab.github.io/2025-libribrain-competition/tracks/)
+...
